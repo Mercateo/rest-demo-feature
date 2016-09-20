@@ -10,6 +10,7 @@ import com.mercateo.common.rest.schemagen.types.ObjectWithSchemaCreator;
 import com.mercateo.common.rest.schemagen.types.PaginatedResponseBuilderCreator;
 import com.mercateo.demo.feature.FeatureChecker;
 import com.mercateo.demo.feature.SimpleFeatureChecker;
+import com.mercateo.demo.feature.TypedFeatureChecker;
 import com.mercateo.demo.services.OrderService;
 import com.mercateo.demo.services.OrderServiceImpl;
 
@@ -24,6 +25,11 @@ public class OrderServerConfiguration {
 	@Bean
 	public FeatureChecker getFeatureChecker() {
 		return new SimpleFeatureChecker();
+	}
+
+	@Bean
+	public TypedFeatureChecker getTypedFeatureChecker(FeatureChecker featureChecker) {
+		return new TypedFeatureChecker(featureChecker);
 	}
 
 	@Bean

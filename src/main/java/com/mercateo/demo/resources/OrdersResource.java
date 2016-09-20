@@ -16,6 +16,7 @@ import javax.ws.rs.core.Link;
 import javax.ws.rs.core.MediaType;
 
 import com.mercateo.common.rest.schemagen.JerseyResource;
+import com.mercateo.common.rest.schemagen.JsonHyperSchema;
 import com.mercateo.common.rest.schemagen.link.LinkFactory;
 import com.mercateo.common.rest.schemagen.link.LinkMetaFactory;
 import com.mercateo.common.rest.schemagen.link.relation.Rel;
@@ -25,7 +26,6 @@ import com.mercateo.common.rest.schemagen.types.PaginatedResponse;
 import com.mercateo.common.rest.schemagen.types.PaginatedResponseBuilderCreator;
 import com.mercateo.demo.feature.Feature;
 import com.mercateo.demo.feature.KnownFeatureId;
-import com.mercateo.demo.lib.schemagen.HyperSchemaCreator;
 import com.mercateo.demo.resources.json.OrderJson;
 import com.mercateo.demo.resources.json.SendBackJson;
 import com.mercateo.demo.services.OrderService;
@@ -42,9 +42,6 @@ public class OrdersResource implements JerseyResource {
 	@Inject
 	private PaginatedResponseBuilderCreator responseBuilderCreator;
 
-	@Inject
-	private HyperSchemaCreator hyperSchemaCreator;
-
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public PaginatedResponse<OrderJson> getOrders(@QueryParam("offset") @DefaultValue("0") Integer offset,
@@ -60,7 +57,6 @@ public class OrdersResource implements JerseyResource {
 				.withElementMapper(this::create).build();
 	}
 
-	@SuppressWarnings("unchecked")
 	private ObjectWithSchema<OrderJson> create(OrderJson order) {
 		LinkFactory<OrdersResource> ordersLinkFactory = linkMetaFactory.createFactoryFor(OrdersResource.class);
 		Optional<Link> self = ordersLinkFactory.forCall(Rel.SELF, r -> r.getOrder(order.getId()));
@@ -68,7 +64,7 @@ public class OrdersResource implements JerseyResource {
 		if (order.getState() == STATE.SHIPPED) {
 			sendBack = ordersLinkFactory.forCall(OrderRel.SEND_BACK, r -> r.sendBack(order.getId(), null));
 		}
-		return hyperSchemaCreator.create(order, self, sendBack);
+		return ObjectWithSchema.create(order, JsonHyperSchema.from(self, sendBack));
 	}
 
 	@GET

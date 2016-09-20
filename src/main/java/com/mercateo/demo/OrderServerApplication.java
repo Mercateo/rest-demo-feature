@@ -4,6 +4,7 @@ import javax.inject.Singleton;
 
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.jackson.JacksonFeature;
+import org.glassfish.jersey.linking.DeclarativeLinkingFeature;
 import org.glassfish.jersey.process.internal.RequestScoped;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.springframework.stereotype.Component;
@@ -39,6 +40,8 @@ public class OrderServerApplication extends ResourceConfig {
 		register(io.swagger.jaxrs.listing.SwaggerSerializers.class);
 
 		LinkFactoryResourceConfig.configureWithoutPlugins(this);
+
+		register(DeclarativeLinkingFeature.class);
 		bindFeaturePlugins();
 	}
 

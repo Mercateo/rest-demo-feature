@@ -1,6 +1,6 @@
-package com.mercateo.demo.resources;
+package com.mercateo.demo.resources.jersey.linking;
 
-import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -11,32 +11,24 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import com.mercateo.common.rest.schemagen.link.LinkMetaFactory;
-import com.mercateo.common.rest.schemagen.link.relation.Rel;
-import com.mercateo.common.rest.schemagen.types.ObjectWithSchema;
-import com.mercateo.common.rest.schemagen.types.PaginatedResponse;
-import com.mercateo.common.rest.schemagen.types.PaginatedResponseBuilderCreator;
+import com.mercateo.demo.feature.TypedFeatureChecker;
 import com.mercateo.demo.resources.json.OrderJson;
 import com.mercateo.demo.resources.json.SendBackJson;
 import com.mercateo.demo.services.OrderService;
 import com.mercateo.demo.services.STATE;
 
 @RunWith(MockitoJUnitRunner.class)
-public class OrdersResource0Test {
+public class OrdersLinkingResource0Test {
+	@Mock
+	private TypedFeatureChecker featureChecker;
 
-	@Spy
-	private LinkMetaFactory linkMetaFactory = LinkMetaFactory.createInsecureFactoryForTest();
-
-	@Spy
-	private PaginatedResponseBuilderCreator responseBuilderCreator = new PaginatedResponseBuilderCreator();
 	@Mock
 	private OrderService orderService;
 
 	@InjectMocks
-	private OrdersResource uut;
+	private OrdersLinkingResource uut;
 
 	@Test
 	public void testGetOrders() throws Exception {
@@ -44,15 +36,14 @@ public class OrdersResource0Test {
 		when(orderService.getOrders(0, 20)).thenReturn(Arrays.asList(orderJson));
 		when(orderService.getTotalCount()).thenReturn(1);
 
-		PaginatedResponse<OrderJson> resp = uut.getOrders(0, 20);
+		uut.getOrders(0, 20);
 
 		verify(orderService).getOrders(0, 20);
 		verify(orderService).getTotalCount();
 		verifyNoMoreInteractions(orderService);
 
-		ObjectWithSchema<OrderJson> order = resp.object.members.get(0);
-		assertTrue(order.schema.getByRel(Rel.SELF).isPresent());
-		assertTrue(order.schema.getByRel(OrderRel.SEND_BACK).isPresent());
+		verify(featureChecker, times(0)).isTicket_5();
+		// checking of correct links not possible here
 	}
 
 	@Test
@@ -61,13 +52,11 @@ public class OrdersResource0Test {
 		OrderJson orderJson = new OrderJson("1", 2, STATE.SHIPPED);
 		when(orderService.getOrder("1")).thenReturn(orderJson);
 
-		ObjectWithSchema<OrderJson> order = uut.getOrder("1");
+		uut.getOrder("1");
 
 		verify(orderService).getOrder("1");
 		verifyNoMoreInteractions(orderService);
-
-		assertTrue(order.schema.getByRel(Rel.SELF).isPresent());
-		assertTrue(order.schema.getByRel(OrderRel.SEND_BACK).isPresent());
+		verify(featureChecker, times(0)).isTicket_5();
 	}
 
 	@Test

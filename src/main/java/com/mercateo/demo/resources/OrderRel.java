@@ -8,6 +8,13 @@ public enum OrderRel implements RelationContainer {
 
 	ORDERS,
 
+	ORDERS_LINKING {
+		@Override
+		public Relation getRelation() {
+			return Relation.of("orders-linking", RelType.OTHER);
+		}
+	},
+
 	SEND_BACK {
 		@Override
 		public Relation getRelation() {
