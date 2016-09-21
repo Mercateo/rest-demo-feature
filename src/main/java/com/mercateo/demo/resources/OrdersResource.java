@@ -31,7 +31,10 @@ import com.mercateo.demo.resources.json.SendBackJson;
 import com.mercateo.demo.services.OrderService;
 import com.mercateo.demo.services.STATE;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Path(Paths.ORDERS)
+@Slf4j
 public class OrdersResource implements JerseyResource {
 	@Inject
 	private LinkMetaFactory linkMetaFactory;
@@ -82,5 +85,6 @@ public class OrdersResource implements JerseyResource {
 	@Feature(KnownFeatureId.TICKET_5)
 	public void sendBack(@PathParam("orderId") @NotNull String orderId, @NotNull SendBackJson sendBackJson) {
 		orderService.sendBack(orderId, sendBackJson);
+		log.info("send back " + orderId + " with " + sendBackJson);
 	}
 }
