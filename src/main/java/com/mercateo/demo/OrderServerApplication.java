@@ -13,6 +13,7 @@ import com.mercateo.common.rest.schemagen.link.injection.LinkFactoryResourceConf
 import com.mercateo.common.rest.schemagen.plugin.FieldCheckerForSchema;
 import com.mercateo.common.rest.schemagen.plugin.MethodCheckerForLink;
 import com.mercateo.demo.feature.injection.FeatureFieldCheckerFactory;
+import com.mercateo.demo.feature.injection.FeatureInterceptionBinder;
 import com.mercateo.demo.feature.injection.FeatureMethodCheckerFactory;
 
 import io.swagger.jaxrs.config.BeanConfig;
@@ -35,6 +36,8 @@ public class OrderServerApplication extends ResourceConfig {
 		beanConfig.setBasePath("/");
 		beanConfig.setResourcePackage(resourceBasePackage);
 		beanConfig.setScan(true);
+
+		register(new FeatureInterceptionBinder());
 
 		register(io.swagger.jaxrs.listing.ApiListingResource.class);
 		register(io.swagger.jaxrs.listing.SwaggerSerializers.class);
