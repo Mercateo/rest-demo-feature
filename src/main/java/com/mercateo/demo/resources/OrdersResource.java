@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
+import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -20,6 +21,8 @@ import com.mercateo.common.rest.schemagen.JsonHyperSchema;
 import com.mercateo.common.rest.schemagen.link.LinkFactory;
 import com.mercateo.common.rest.schemagen.link.LinkMetaFactory;
 import com.mercateo.common.rest.schemagen.link.relation.Rel;
+import com.mercateo.common.rest.schemagen.link.relation.RelType;
+import com.mercateo.common.rest.schemagen.link.relation.Relation;
 import com.mercateo.common.rest.schemagen.types.ObjectWithSchema;
 import com.mercateo.common.rest.schemagen.types.PaginatedList;
 import com.mercateo.common.rest.schemagen.types.PaginatedResponse;
@@ -57,6 +60,9 @@ public class OrdersResource implements JerseyResource {
 						orderService.getOrders(offset, limit)))
 				.withPaginationLinkCreator((rel, targetOffset, targetLimit) -> ordersLinkFactory.forCall(rel,
 						r -> r.getOrders(targetOffset, targetLimit)))
+				// get a templated link for the orders collection
+				.withContainerLinks(ordersLinkFactory.forCall(Relation.of("instance", RelType.OTHER),
+						r -> r.getOrderTemplated(new IdBean())))
 				.withElementMapper(this::create).build();
 	}
 
@@ -75,6 +81,15 @@ public class OrdersResource implements JerseyResource {
 	@Path("{orderId}")
 	public ObjectWithSchema<OrderJson> getOrder(@PathParam("orderId") String id) {
 		OrderJson order = orderService.getOrder(id);
+		return create(order);
+
+	}
+
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("templated/{id}")
+	public ObjectWithSchema<OrderJson> getOrderTemplated(@BeanParam IdBean idBean) {
+		OrderJson order = orderService.getOrder(idBean.getId());
 		return create(order);
 
 	}
