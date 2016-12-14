@@ -38,7 +38,7 @@
         <dependency>
             <groupId>com.mercateo</groupId>
             <artifactId>common.rest.schemagen</artifactId>
-            <version>0.15.0</version>
+            <version>0.17.0</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
