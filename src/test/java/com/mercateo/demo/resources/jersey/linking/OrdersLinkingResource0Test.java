@@ -33,12 +33,12 @@ public class OrdersLinkingResource0Test {
 	@Test
 	public void testGetOrders() throws Exception {
 		OrderJson orderJson = new OrderJson("1", 2, STATE.SHIPPED);
-		when(orderService.getOrders(0, 20)).thenReturn(Arrays.asList(orderJson));
+		when(orderService.getOrders(0, 20, null)).thenReturn(Arrays.asList(orderJson));
 		when(orderService.getTotalCount()).thenReturn(1);
 
 		uut.getOrders(0, 20);
 
-		verify(orderService).getOrders(0, 20);
+		verify(orderService).getOrders(0, 20, null);
 		verify(orderService).getTotalCount();
 		verifyNoMoreInteractions(orderService);
 

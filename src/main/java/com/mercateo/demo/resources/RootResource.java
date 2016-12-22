@@ -33,7 +33,7 @@ public class RootResource implements JerseyResource {
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Success") })
 	public ObjectWithSchema<PersonJson> getRoot() {
 		Optional<Link> ordersLink = linkMetaFactory.createFactoryFor(OrdersResource.class).forCall(OrderRel.ORDERS,
-				r -> r.getOrders(0, 20));
+				r -> r.getOrders(new SearchQueryBean(0, 20)));
 
 		Optional<Link> ordersLinkingLink = linkMetaFactory.createFactoryFor(OrdersLinkingResource.class)
 				.forCall(OrderRel.ORDERS_LINKING, r -> r.getOrders(0, 20));

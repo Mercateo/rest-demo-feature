@@ -6,13 +6,11 @@ import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Link;
 import javax.ws.rs.core.MediaType;
 
@@ -50,19 +48,21 @@ public class OrdersResource implements JerseyResource {
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public PaginatedResponse<OrderJson> getOrders(@QueryParam("offset") @DefaultValue("0") Integer offset,
-			@QueryParam("limit") @DefaultValue("100") Integer limit) {
+	public PaginatedResponse<OrderJson> getOrders(@BeanParam SearchQueryBean searchQueryBean) {
+		Integer limit = searchQueryBean.getLimit();
+		Integer offset = searchQueryBean.getOffset();
+		String id = searchQueryBean.getId();
 
 		LinkFactory<OrdersResource> ordersLinkFactory = linkMetaFactory.createFactoryFor(OrdersResource.class);
 
 		return responseBuilderCreator.<OrderJson, OrderJson> builder()
 				.withList(new PaginatedList<>(orderService.getTotalCount(), offset, limit,
-						orderService.getOrders(offset, limit)))
+						orderService.getOrders(offset, limit, id)))
 				.withPaginationLinkCreator((rel, targetOffset, targetLimit) -> ordersLinkFactory.forCall(rel,
-						r -> r.getOrders(targetOffset, targetLimit)))
+						r -> r.getOrders(new SearchQueryBean(targetOffset, targetLimit))))
 				// get a templated link for the orders collection
-				.withContainerLinks(ordersLinkFactory.forCall(Relation.of("instance", RelType.OTHER),
-						r -> r.getOrderTemplated(new IdBean())))
+				.withContainerLinks(ordersLinkFactory.forCall(Relation.of("instance-search", RelType.OTHER),
+						r -> r.getOrders(new SearchQueryBean())))
 				.withElementMapper(this::create).build();
 	}
 
@@ -81,15 +81,6 @@ public class OrdersResource implements JerseyResource {
 	@Path("{orderId}")
 	public ObjectWithSchema<OrderJson> getOrder(@PathParam("orderId") String id) {
 		OrderJson order = orderService.getOrder(id);
-		return create(order);
-
-	}
-
-	@GET
-	@Produces(MediaType.APPLICATION_JSON)
-	@Path("templated/{id}")
-	public ObjectWithSchema<OrderJson> getOrderTemplated(@BeanParam IdBean idBean) {
-		OrderJson order = orderService.getOrder(idBean.getId());
 		return create(order);
 
 	}

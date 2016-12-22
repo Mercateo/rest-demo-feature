@@ -1,5 +1,6 @@
 package com.mercateo.demo.services;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -15,7 +16,17 @@ public class OrderServiceImpl implements OrderService {
 	private static final OrderJson two = new OrderJson("2", 200, STATE.SHIPPED);
 
 	@Override
-	public List<OrderJson> getOrders(Integer offset, Integer limit) {
+	public List<OrderJson> getOrders(Integer offset, Integer limit, String idOrNull) {
+		if (idOrNull != null) {
+			if (idOrNull.equals("1")) {
+				return Arrays.asList(one);
+			}
+			if (idOrNull.equals("2")) {
+				return Arrays.asList(two);
+			} else {
+				return new ArrayList<>();
+			}
+		}
 		return Arrays.asList(one, two);
 	}
 

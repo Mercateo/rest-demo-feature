@@ -41,7 +41,7 @@ public class OrdersLinkingResource implements JerseyResource {
 	public OrdersWrapper getOrders(@QueryParam("offset") @DefaultValue("0") Integer offset,
 			@QueryParam("limit") @DefaultValue("100") Integer limit) {
 
-		List<OrderJson> orders = orderService.getOrders(offset, limit);
+		List<OrderJson> orders = orderService.getOrders(offset, limit, null);
 		List<OrderWrapper> list = orders.stream().map(this::create).collect(Collectors.toList());
 		return OrdersWrapper.builder().members(list).//
 				totalCount(orderService.getTotalCount()).//
