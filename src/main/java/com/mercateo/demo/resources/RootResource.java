@@ -14,6 +14,9 @@ import com.mercateo.common.rest.schemagen.JsonHyperSchema;
 import com.mercateo.common.rest.schemagen.link.LinkMetaFactory;
 import com.mercateo.common.rest.schemagen.types.ObjectWithSchema;
 import com.mercateo.demo.resources.jersey.linking.OrdersLinkingResource;
+import com.mercateo.demo.resources.orders.OrderRel;
+import com.mercateo.demo.resources.orders.OrdersResource;
+import com.mercateo.demo.resources.orders.SearchQueryBean;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

@@ -10,6 +10,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import com.mercateo.common.rest.schemagen.link.LinkMetaFactory;
 import com.mercateo.common.rest.schemagen.types.ObjectWithSchema;
+import com.mercateo.demo.resources.orders.OrderRel;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RootResourceTest {

@@ -25,7 +25,7 @@ public class FeatureMethodChecker0Test {
 		Method method = getClass().getMethod("testTest");
 		Scope scope = new CallScope(getClass(), method, new Object[0], null);
 		uut.test(scope);
-		verify(featureChecker).hasFeature(method);
+		verify(featureChecker).hasFeature(scope);
 	}
 
 }

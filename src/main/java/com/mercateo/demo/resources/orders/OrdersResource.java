@@ -1,4 +1,4 @@
-package com.mercateo.demo.resources;
+package com.mercateo.demo.resources.orders;
 
 import java.util.Optional;
 
@@ -7,7 +7,7 @@ import javax.validation.constraints.NotNull;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -22,15 +22,21 @@ import com.mercateo.common.rest.schemagen.link.relation.Rel;
 import com.mercateo.common.rest.schemagen.link.relation.RelType;
 import com.mercateo.common.rest.schemagen.link.relation.Relation;
 import com.mercateo.common.rest.schemagen.types.ObjectWithSchema;
-import com.mercateo.common.rest.schemagen.types.PaginatedList;
 import com.mercateo.common.rest.schemagen.types.PaginatedResponse;
 import com.mercateo.common.rest.schemagen.types.PaginatedResponseBuilderCreator;
 import com.mercateo.demo.feature.Feature;
 import com.mercateo.demo.feature.KnownFeatureId;
-import com.mercateo.demo.resources.json.OrderJson;
-import com.mercateo.demo.resources.json.SendBackJson;
-import com.mercateo.demo.services.OrderService;
-import com.mercateo.demo.services.STATE;
+import com.mercateo.demo.resources.Paths;
+import com.mercateo.demo.resources.returns.CreateSendBackJson;
+import com.mercateo.demo.resources.returns.ReturnRel;
+import com.mercateo.demo.resources.returns.ReturnsResource;
+import com.mercateo.demo.services.order.Order;
+import com.mercateo.demo.services.order.OrderId;
+import com.mercateo.demo.services.order.OrderService;
+import com.mercateo.demo.services.order.STATE;
+import com.mercateo.demo.services.returns.ReturnId;
+import com.mercateo.demo.services.returns.ReturnsReadRepo;
+import com.mercateo.demo.services.returns.ReturnsWriteService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -44,6 +50,12 @@ public class OrdersResource implements JerseyResource {
 	private OrderService orderService;
 
 	@Inject
+	private ReturnsWriteService returnsWriteService;
+
+	@Inject
+	private ReturnsReadRepo returnsReadService;
+
+	@Inject
 	private PaginatedResponseBuilderCreator responseBuilderCreator;
 
 	@GET
@@ -51,46 +63,59 @@ public class OrdersResource implements JerseyResource {
 	public PaginatedResponse<OrderJson> getOrders(@BeanParam SearchQueryBean searchQueryBean) {
 		Integer limit = searchQueryBean.getLimit();
 		Integer offset = searchQueryBean.getOffset();
-		String id = searchQueryBean.getId();
+		OrderId id = searchQueryBean.getId();
 
 		LinkFactory<OrdersResource> ordersLinkFactory = linkMetaFactory.createFactoryFor(OrdersResource.class);
 
-		return responseBuilderCreator.<OrderJson, OrderJson> builder()
-				.withList(new PaginatedList<>(orderService.getTotalCount(), offset, limit,
-						orderService.getOrders(offset, limit, id)))
+		return responseBuilderCreator.<Order, OrderJson> builder().withList(orderService.getOrders(offset, limit, id))
 				.withPaginationLinkCreator((rel, targetOffset, targetLimit) -> ordersLinkFactory.forCall(rel,
 						r -> r.getOrders(new SearchQueryBean(targetOffset, targetLimit))))
-				// get a templated link for the orders collection
+				// get a search for a specific order
 				.withContainerLinks(ordersLinkFactory.forCall(Relation.of("instance-search", RelType.OTHER),
 						r -> r.getOrders(new SearchQueryBean())))
-				.withElementMapper(this::create).build();
+				.withElementMapper(this::createSchema).build();
 	}
 
-	private ObjectWithSchema<OrderJson> create(OrderJson order) {
+	private ObjectWithSchema<OrderJson> createSchema(Order order) {
 		LinkFactory<OrdersResource> ordersLinkFactory = linkMetaFactory.createFactoryFor(OrdersResource.class);
 		Optional<Link> self = ordersLinkFactory.forCall(Rel.SELF, r -> r.getOrder(order.getId()));
 		Optional<Link> sendBack = Optional.empty();
+		Optional<Link> returnLink = Optional.empty();
 		if (order.getState() == STATE.SHIPPED) {
 			sendBack = ordersLinkFactory.forCall(OrderRel.SEND_BACK, r -> r.sendBack(order.getId(), null));
+		} else if (order.getState() == STATE.RETURNED) {
+			LinkFactory<ReturnsResource> returnsLinkFactory = linkMetaFactory.createFactoryFor(ReturnsResource.class);
+			returnLink = returnsReadService.findByOrderId(order.getId()).//
+					map(ret -> returnsLinkFactory.forCall(OrderRel.RETURN, r -> r.getReturn(ret.getId())).orElse(null));
 		}
-		return ObjectWithSchema.create(order, JsonHyperSchema.from(self, sendBack));
+		return ObjectWithSchema.create(OrderJson.from(order), JsonHyperSchema.from(self, sendBack, returnLink));
 	}
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("{orderId}")
-	public ObjectWithSchema<OrderJson> getOrder(@PathParam("orderId") String id) {
-		OrderJson order = orderService.getOrder(id);
-		return create(order);
+	public ObjectWithSchema<OrderJson> getOrder(@PathParam("orderId") OrderId id) {
+		Order order = orderService.getOrder(id);
+		return createSchema(order);
 
 	}
 
 	@Path("{orderId}/send-back")
-	@POST
+	@PUT
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Feature(KnownFeatureId.TICKET_5)
-	public void sendBack(@PathParam("orderId") @NotNull String orderId, @NotNull SendBackJson sendBackJson) {
-		orderService.sendBack(orderId, sendBackJson);
+	@Produces(MediaType.APPLICATION_JSON)
+	public ObjectWithSchema<Void> sendBack(@PathParam("orderId") @NotNull OrderId orderId,
+			@NotNull CreateSendBackJson sendBackJson) {
+		// includes check, if order could be sent back
+		ReturnId returnId = returnsWriteService.create(sendBackJson, orderId);
+		Optional<Link> orderLink = linkMetaFactory.createFactoryFor(OrdersResource.class).forCall(OrderRel.ORDER,
+				r -> r.getOrder(orderId));
+
+		Optional<Link> returnLink = linkMetaFactory.createFactoryFor(ReturnsResource.class).forCall(ReturnRel.RETURN,
+				r -> r.getReturn(returnId));
+
 		log.info("send back " + orderId + " with " + sendBackJson);
+		return ObjectWithSchema.create(null, JsonHyperSchema.from(orderLink, returnLink));
 	}
 }

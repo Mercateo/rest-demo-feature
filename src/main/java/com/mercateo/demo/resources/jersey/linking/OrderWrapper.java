@@ -10,7 +10,7 @@ import org.glassfish.jersey.linking.InjectLink;
 import org.glassfish.jersey.linking.InjectLinks;
 
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
-import com.mercateo.demo.resources.json.OrderJson;
+import com.mercateo.demo.resources.orders.OrderJson;
 
 import lombok.Builder;
 import lombok.Data;

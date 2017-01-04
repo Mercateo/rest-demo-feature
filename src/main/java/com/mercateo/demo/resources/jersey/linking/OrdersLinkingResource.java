@@ -16,13 +16,17 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import com.mercateo.common.rest.schemagen.JerseyResource;
+import com.mercateo.common.rest.schemagen.types.PaginatedList;
 import com.mercateo.demo.feature.Feature;
 import com.mercateo.demo.feature.KnownFeatureId;
 import com.mercateo.demo.feature.TypedFeatureChecker;
 import com.mercateo.demo.resources.Paths;
-import com.mercateo.demo.resources.json.OrderJson;
-import com.mercateo.demo.resources.json.SendBackJson;
-import com.mercateo.demo.services.OrderService;
+import com.mercateo.demo.resources.orders.OrderJson;
+import com.mercateo.demo.resources.returns.CreateSendBackJson;
+import com.mercateo.demo.services.order.Order;
+import com.mercateo.demo.services.order.OrderId;
+import com.mercateo.demo.services.order.OrderService;
+import com.mercateo.demo.services.returns.ReturnsWriteService;
 
 import lombok.Getter;
 
@@ -36,28 +40,31 @@ public class OrdersLinkingResource implements JerseyResource {
 	@Getter
 	private TypedFeatureChecker featureChecker;
 
+	@Inject
+	private ReturnsWriteService returnsWriteService;
+
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public OrdersWrapper getOrders(@QueryParam("offset") @DefaultValue("0") Integer offset,
 			@QueryParam("limit") @DefaultValue("100") Integer limit) {
 
-		List<OrderJson> orders = orderService.getOrders(offset, limit, null);
-		List<OrderWrapper> list = orders.stream().map(this::create).collect(Collectors.toList());
+		PaginatedList<Order> orders = orderService.getOrders(offset, limit, null);
+		List<OrderWrapper> list = orders.members.stream().map(this::create).collect(Collectors.toList());
 		return OrdersWrapper.builder().members(list).//
-				totalCount(orderService.getTotalCount()).//
+				totalCount(orders.total).//
 				limit(limit).//
 				offset(offset).build();
 	}
 
-	private OrderWrapper create(OrderJson order) {
-		return OrderWrapper.builder().order(order).build();
+	private OrderWrapper create(Order order) {
+		return OrderWrapper.builder().order(OrderJson.from(order)).build();
 	}
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("{orderId}")
-	public OrderWrapper getOrder(@PathParam("orderId") String id) {
-		OrderJson order = orderService.getOrder(id);
+	public OrderWrapper getOrder(@PathParam("orderId") OrderId id) {
+		Order order = orderService.getOrder(id);
 		return create(order);
 
 	}
@@ -66,8 +73,8 @@ public class OrdersLinkingResource implements JerseyResource {
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Feature(KnownFeatureId.TICKET_5)
-	public void sendBack(@PathParam("orderId") @NotNull String orderId, @NotNull SendBackJson sendBackJson) {
-		orderService.sendBack(orderId, sendBackJson);
+	public void sendBack(@PathParam("orderId") @NotNull OrderId orderId, @NotNull CreateSendBackJson sendBackJson) {
+		returnsWriteService.create(sendBackJson, orderId);
 	}
 
 }

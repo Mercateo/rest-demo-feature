@@ -11,8 +11,6 @@ import com.mercateo.common.rest.schemagen.types.PaginatedResponseBuilderCreator;
 import com.mercateo.demo.feature.FeatureChecker;
 import com.mercateo.demo.feature.SimpleFeatureChecker;
 import com.mercateo.demo.feature.TypedFeatureChecker;
-import com.mercateo.demo.services.OrderService;
-import com.mercateo.demo.services.OrderServiceImpl;
 
 @Configuration
 public class OrderServerConfiguration {
@@ -30,11 +28,6 @@ public class OrderServerConfiguration {
 	@Bean
 	public TypedFeatureChecker getTypedFeatureChecker(FeatureChecker featureChecker) {
 		return new TypedFeatureChecker(featureChecker);
-	}
-
-	@Bean
-	OrderService getOrderService() {
-		return new OrderServiceImpl();
 	}
 
 	@Bean

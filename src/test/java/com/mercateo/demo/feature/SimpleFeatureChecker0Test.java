@@ -7,6 +7,8 @@ import java.lang.annotation.Annotation;
 
 import org.junit.Test;
 
+import com.mercateo.common.rest.schemagen.link.CallScope;
+
 public class SimpleFeatureChecker0Test {
 
 	private Object nullField;
@@ -18,7 +20,9 @@ public class SimpleFeatureChecker0Test {
 
 		assertTrue(uut.hasFeature((Feature) null));
 		assertTrue(uut.hasFeature(this.getClass().getDeclaredField("nullField")));
-		assertTrue(uut.hasFeature(this.getClass().getMethod("testHasFeature_for_null")));
+		CallScope callScope = new CallScope(this.getClass(), this.getClass().getMethod("testHasFeature_for_null"), null,
+				null);
+		assertTrue(uut.hasFeature(callScope));
 	}
 
 	@Test
