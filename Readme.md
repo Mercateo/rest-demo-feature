@@ -67,7 +67,7 @@ After starting the server, the resource http://localhost:9090/orders/2 looks lik
       }
 ```
 
-The first link shows the object oriented programming style. There is an order object and one calls a send-back method on it. According to this [article]{https://www.thoughtworks.com/de/insights/blog/rest-api-design-resource-modeling} this is not the best way of modeling a REST-API. Advantages are the less effort for documentations (orderId is not in the schema and therefore does nor have to be documented) and the more "natural" way to do things. Albeit one programs in fact SOAPlike-APIS.
+The first link shows the object oriented programming style. There is an order object and one calls a send-back method on it. According to this [article](https://www.thoughtworks.com/de/insights/blog/rest-api-design-resource-modeling) this is not the best way of modeling a REST-API. Advantages are the less effort for documentations (orderId is not in the schema and therefore does nor have to be documented) and the more "natural" way to do things. Albeit one programs in fact SOAPlike-APIS.
 
 The second link shows the resource way to do it. There is a second "returns" resource. The schema shows, that the orderId can only be filled with the current order id at the moment. If one uses a schema-less link format (like e.g. HAL), this information has to be transported via documentation to the client programmer. 
 If one does the modeling in that way, the whole server interaction is uniform. Meaning no other verbs than the HTTP-verbs are involved. 
@@ -143,7 +143,7 @@ In the past, we used templates to get URLs for resource, from which we know the 
 ``` 
 There is a query parameter "id", where you can fill in the known id and get (hopefully :-)) a collection with one member.
 
-As one can see in the "returns" resource, there is no id query parameter. That's because the link to the specific return resource in the response of the "create" requests. So one can save the whole link description object, like mentioned [here]{http://blog.ploeh.dk/2016/12/07/domain-modelling-with-rest/}. So there is no need to guess the link for a known id from a template.
+As one can see in the "returns" resource, there is no id query parameter. That's because the link to the specific return resource in the response of the "create" requests. So one can save the whole link description object, like mentioned [here](http://blog.ploeh.dk/2016/12/07/domain-modelling-with-rest/). So there is no need to guess the link for a known id from a template.
 
 # jersey linking
 There is also a simple demo of jerseys build in mechanisms for link building. See com.mercateo.demo.resources.jersey.linking.OrdersLinkingResource
