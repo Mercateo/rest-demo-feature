@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import com.mercateo.common.rest.schemagen.link.injection.LinkFactoryResourceConfig;
 import com.mercateo.common.rest.schemagen.plugin.FieldCheckerForSchema;
 import com.mercateo.common.rest.schemagen.plugin.MethodCheckerForLink;
+import com.mercateo.demo.feature.FeatureDynamicFeature;
 import com.mercateo.demo.feature.injection.FeatureFieldCheckerFactory;
 import com.mercateo.demo.feature.injection.FeatureInterceptionBinder;
 import com.mercateo.demo.feature.injection.FeatureMethodCheckerFactory;
@@ -45,6 +46,7 @@ public class OrderServerApplication extends ResourceConfig {
 		LinkFactoryResourceConfig.configureWithoutPlugins(this);
 
 		register(DeclarativeLinkingFeature.class);
+		register(FeatureDynamicFeature.class);
 		bindFeaturePlugins();
 	}
 

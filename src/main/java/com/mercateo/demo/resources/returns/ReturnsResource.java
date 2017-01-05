@@ -70,7 +70,10 @@ public class ReturnsResource implements JerseyResource {
 						returningList.getContent()))
 				.withPaginationLinkCreator((rel, targetOffset, targetLimit) -> ordersLinkFactory.forCall(rel,
 						r -> r.getReturns(new SearchQueryBean(targetOffset, targetLimit))))
-				.withElementMapper(this::createSchema).build();
+				.withElementMapper(this::createSchema)//
+				.withContainerLinks(linkMetaFactory.createFactoryFor(ReturnsResource.class).forCall(Rel.CREATE,
+						r -> r.createNew(null)))//
+				.build();
 	}
 
 	private ObjectWithSchema<ReturnJson> createSchema(Return currentReturn) {
