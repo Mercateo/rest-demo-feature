@@ -1,8 +1,9 @@
 # rest-demo-jersey [![Build Status](https://travis-ci.org/Mercateo/rest-demo-feature.svg?branch=major-refactoring)](https://travis-ci.org/Mercateo/rest-demo-feature) [![Coverage Status](https://coveralls.io/repos/github/Mercateo/rest-demo-feature/badge.svg?branch=major-refactoring)](https://coveralls.io/github/Mercateo/rest-demo-feature?branch=major-refactoring)
 Spring-boot and Jersey based REST service showing a lot of things, we discovered in the last time. 
-
-## The resources
-the entry point for the HATEOAS based API is a GET to http://localhost:9090 
+## startup
+The Main is in com.mercateo.demo.OrderServer
+## entry point
+The entry point for the HATEOAS based API is a GET to http://localhost:9090  
 ### get base info
 GET: http://localhost:9090
 There are 3 links
