@@ -20,8 +20,8 @@ public class SimpleFeatureChecker0Test {
 
 		assertTrue(uut.hasFeature((Feature) null));
 		assertTrue(uut.hasFeature(this.getClass().getDeclaredField("nullField")));
-		CallScope callScope = new CallScope(this.getClass(), this.getClass().getMethod("testHasFeature_for_null"), null,
-				null);
+		CallScope callScope = new CallScope(this.getClass(), this.getClass().getMethod("testHasFeature_for_null"),
+				new Object[0], null);
 		assertTrue(uut.hasFeature(callScope));
 	}
 
