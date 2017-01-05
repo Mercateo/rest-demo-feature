@@ -39,6 +39,13 @@ public enum OrderRel implements RelationContainer {
 		public Relation getRelation() {
 			return Relation.of("send-back", RelType.INHERITED);
 		}
+	},
+
+	SEND_BACK_NOUN {
+		@Override
+		public Relation getRelation() {
+			return Relation.of("send-back-noun", RelType.INHERITED);
+		}
 	};
 
 	@Override

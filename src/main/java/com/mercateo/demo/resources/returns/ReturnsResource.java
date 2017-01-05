@@ -5,6 +5,7 @@ import java.util.Optional;
 import javax.inject.Inject;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -29,15 +30,23 @@ import com.mercateo.demo.resources.Paths;
 import com.mercateo.demo.resources.orders.OrderRel;
 import com.mercateo.demo.resources.orders.OrdersResource;
 import com.mercateo.demo.services.OffsetBasedPageRequest;
+import com.mercateo.demo.services.order.OrderId;
 import com.mercateo.demo.services.returns.Return;
 import com.mercateo.demo.services.returns.ReturnId;
 import com.mercateo.demo.services.returns.ReturnsReadRepo;
+import com.mercateo.demo.services.returns.ReturnsWriteService;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Path(Paths.RETURNS)
 @Feature(KnownFeatureId.TICKET_5)
+@Slf4j
 public class ReturnsResource implements JerseyResource {
 	@Inject
 	private LinkMetaFactory linkMetaFactory;
+
+	@Inject
+	private ReturnsWriteService returnsWriteService;
 
 	@Inject
 	private ReturnsReadRepo returnsReadService;
@@ -84,5 +93,20 @@ public class ReturnsResource implements JerseyResource {
 		}
 		return createSchema(returnEntity);
 
+	}
+
+	@PUT
+	@Produces(MediaType.APPLICATION_JSON)
+	public ObjectWithSchema<Void> createNew(CreateReturnJson createJson) {
+		OrderId orderId = OrderId.fromString(createJson.getOrderId());
+		ReturnId returnId = returnsWriteService.create(createJson, orderId);
+		Optional<Link> orderLink = linkMetaFactory.createFactoryFor(OrdersResource.class).forCall(OrderRel.ORDER,
+				r -> r.getOrder(orderId));
+
+		Optional<Link> returnLink = linkMetaFactory.createFactoryFor(ReturnsResource.class).forCall(ReturnRel.RETURN,
+				r -> r.getReturn(returnId));
+
+		log.info("send back " + orderId + " with " + createJson);
+		return ObjectWithSchema.create(null, JsonHyperSchema.from(orderLink, returnLink));
 	}
 }

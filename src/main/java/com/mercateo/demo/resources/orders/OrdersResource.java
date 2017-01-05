@@ -21,12 +21,15 @@ import com.mercateo.common.rest.schemagen.link.LinkMetaFactory;
 import com.mercateo.common.rest.schemagen.link.relation.Rel;
 import com.mercateo.common.rest.schemagen.link.relation.RelType;
 import com.mercateo.common.rest.schemagen.link.relation.Relation;
+import com.mercateo.common.rest.schemagen.parameter.CallContext;
+import com.mercateo.common.rest.schemagen.parameter.Parameter;
 import com.mercateo.common.rest.schemagen.types.ObjectWithSchema;
 import com.mercateo.common.rest.schemagen.types.PaginatedResponse;
 import com.mercateo.common.rest.schemagen.types.PaginatedResponseBuilderCreator;
 import com.mercateo.demo.feature.Feature;
 import com.mercateo.demo.feature.KnownFeatureId;
 import com.mercateo.demo.resources.Paths;
+import com.mercateo.demo.resources.returns.CreateReturnJson;
 import com.mercateo.demo.resources.returns.CreateSendBackJson;
 import com.mercateo.demo.resources.returns.ReturnRel;
 import com.mercateo.demo.resources.returns.ReturnsResource;
@@ -79,16 +82,24 @@ public class OrdersResource implements JerseyResource {
 	private ObjectWithSchema<OrderJson> createSchema(Order order) {
 		LinkFactory<OrdersResource> ordersLinkFactory = linkMetaFactory.createFactoryFor(OrdersResource.class);
 		Optional<Link> self = ordersLinkFactory.forCall(Rel.SELF, r -> r.getOrder(order.getId()));
+		LinkFactory<ReturnsResource> returnsLinkFactory = linkMetaFactory.createFactoryFor(ReturnsResource.class);
 		Optional<Link> sendBack = Optional.empty();
+		Optional<Link> sendBack2 = Optional.empty();
 		Optional<Link> returnLink = Optional.empty();
 		if (order.getState() == STATE.SHIPPED) {
 			sendBack = ordersLinkFactory.forCall(OrderRel.SEND_BACK, r -> r.sendBack(order.getId(), null));
+			final CallContext context = Parameter.createContext();
+			final Parameter.Builder<CreateReturnJson> createReturnBuilder = context.builderFor(CreateReturnJson.class) //
+					.allowValues(new CreateReturnJson(null, order.getId().getId()));
+			sendBack2 = returnsLinkFactory.forCall(OrderRel.SEND_BACK_NOUN,
+					r -> r.createNew(createReturnBuilder.build().get()), context);
 		} else if (order.getState() == STATE.RETURNED) {
-			LinkFactory<ReturnsResource> returnsLinkFactory = linkMetaFactory.createFactoryFor(ReturnsResource.class);
+
 			returnLink = returnsReadService.findByOrderId(order.getId()).//
 					map(ret -> returnsLinkFactory.forCall(OrderRel.RETURN, r -> r.getReturn(ret.getId())).orElse(null));
 		}
-		return ObjectWithSchema.create(OrderJson.from(order), JsonHyperSchema.from(self, sendBack, returnLink));
+		return ObjectWithSchema.create(OrderJson.from(order),
+				JsonHyperSchema.from(self, sendBack, sendBack2, returnLink));
 	}
 
 	@GET

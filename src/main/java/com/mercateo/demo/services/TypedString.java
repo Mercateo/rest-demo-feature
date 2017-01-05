@@ -16,10 +16,10 @@ public abstract class TypedString implements Serializable {
 	@NonNull
 	@Getter
 	private final String id;
-	
+
 	@Override
 	public String toString() {
-	return id;
+		return id;
 	}
 
 }
