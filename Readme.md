@@ -146,7 +146,7 @@ There is a query parameter "id", where you can fill in the known id and get (hop
 
 As one can see in the "returns" resource, there is no id query parameter. That's because the link to the specific return resource is in the response of the "create" requests and in the response of the order, which is returned. 
 
-There is also the mindset out there, that one can save the whole link description object, like mentioned [here](http://blog.ploeh.dk/2016/12/07/domain-modelling-with-rest/). So there is no need to guess the link for a known id from a template. We see, that this mindset is very arguable, because HATEOAS-principle is able to replace URLs every time. So we decide to implement it in this demo to do some experiments with it. 
+There is also the mindset out there, that one can save the whole link description object, like mentioned [here](http://blog.ploeh.dk/2016/12/07/domain-modelling-with-rest/). So there is no need to guess the link for a known id from a template. We see, that this mindset is very arguable, because HATEOAS-principle (like we understand it), is to be able to replace URLs every time. So we decide to implement it in this demo to do some experiments with it. 
 
 # jersey linking
 There is also a simple demo of jerseys build in mechanisms for link building. See com.mercateo.demo.resources.jersey.linking.OrdersLinkingResource
