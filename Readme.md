@@ -144,8 +144,7 @@ In the past, we used templates to get URLs for resource, from which we know the 
 ``` 
 There is a query parameter "id", where you can fill in the known id and get (hopefully :-)) a collection with one member.
 
-As one can see in the "returns" resource, there is no id query parameter. That's because the link to the specific return resource in the response of the "create" requests. So one can save the whole link description object, like mentioned [here](http://blog.ploeh.dk/2016/12/07/domain-modelling-with-rest/). So there is no need to guess the link for a known id from a template. 
-This mindset contradicts the most advantages one gets from dynamic URL replacing. So we just implement it here for demonstration purposes.  
+As one can see in the "returns" resource, there is no id query parameter. That's because the link to the specific return resource in the response of the "create" requests. So one can save the whole link description object, like mentioned [here](http://blog.ploeh.dk/2016/12/07/domain-modelling-with-rest/). So there is no need to guess the link for a known id from a template. We see, that this mindset is very arguable, because HATEOAS-principle is able to replace URLs every time. So we decide to implement it in this demo to do some experiments with it. 
 
 # jersey linking
 There is also a simple demo of jerseys build in mechanisms for link building. See com.mercateo.demo.resources.jersey.linking.OrdersLinkingResource
