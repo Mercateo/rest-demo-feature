@@ -19,8 +19,8 @@ To play a little bit with the Feature around, manipulate com.mercateo.demo.featu
 **Note:** The com.mercateo.demo.feature.Feature and the feature checkers are only simple "mocks", of course one can bring here own Annotations and frameworks like [togglz]{https://www.togglz.org/}. 
 
 # The resource way
-In the orders resource you can see a send-back link in two diffent ways.
-The links are "http://localhost:9090/orders/2/send-back" vs. "http://localhost:9090/returns". The first one is the **object oriented way** to send an order back, the secound the **resoure way**.
+In the orders resource you can see a send-back link in two different ways.
+The links are "http://localhost:9090/orders/2/send-back" vs. "http://localhost:9090/returns". The first one is the **object oriented way** to send an order back, the second the **resource way**.
 
 In more detail:
 
