@@ -19,7 +19,7 @@ public class Order {
 	@NonNull
 	@Id
 	private OrderId id;
-	@NonNull
+
 	private double total;
 	@NonNull
 	private STATE state;
