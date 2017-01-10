@@ -18,7 +18,12 @@ To play a little bit with the Feature around, manipulate com.mercateo.demo.featu
 * Feature Toggling and Link generation just work with annotations in our link-building framework. One only has to write com.mercateo.demo.feature.FeatureFieldChecker and com.mercateo.demo.feature.FeatureMethodChecker. Having all the advantages of declarative programming.
 **Note:** The com.mercateo.demo.feature.Feature and the feature checkers are only simple "mocks", of course one can bring here own Annotations and frameworks like [togglz]{https://www.togglz.org/}. 
 
-# The resource way to do things 
+# The resource way
+In the orders resource you can see a send-back link in two diffent ways.
+The links are "http://localhost:9090/orders/2/send-back" vs. "http://localhost:9090/returns". The first one is the **object oriented way** to send an order back, the secound the **resoure way**.
+
+In more detail:
+
 After starting the server, the resource http://localhost:9090/orders/2 looks like (omitting some lines):
 ```javascript
    {
