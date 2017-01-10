@@ -13,11 +13,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import com.mercateo.common.rest.schemagen.types.PaginatedList;
 import com.mercateo.demo.feature.TypedFeatureChecker;
-import com.mercateo.demo.resources.json.OrderJson;
-import com.mercateo.demo.resources.json.SendBackJson;
-import com.mercateo.demo.services.OrderService;
-import com.mercateo.demo.services.STATE;
+import com.mercateo.demo.resources.returns.CreateSendBackJson;
+import com.mercateo.demo.services.order.Order;
+import com.mercateo.demo.services.order.OrderId;
+import com.mercateo.demo.services.order.OrderService;
+import com.mercateo.demo.services.order.STATE;
+import com.mercateo.demo.services.returns.ReturnsWriteService;
 
 @RunWith(MockitoJUnitRunner.class)
 public class OrdersLinkingResource0Test {
@@ -26,20 +29,20 @@ public class OrdersLinkingResource0Test {
 
 	@Mock
 	private OrderService orderService;
+	@Mock
+	private ReturnsWriteService returnsWriteService;
 
 	@InjectMocks
 	private OrdersLinkingResource uut;
 
 	@Test
 	public void testGetOrders() throws Exception {
-		OrderJson orderJson = new OrderJson("1", 2, STATE.SHIPPED);
-		when(orderService.getOrders(0, 20, null)).thenReturn(Arrays.asList(orderJson));
-		when(orderService.getTotalCount()).thenReturn(1);
+		Order orderJson = new Order(OrderId.fromString("1"), 2, STATE.SHIPPED);
+		when(orderService.getOrders(0, 20, null)).thenReturn(new PaginatedList<>(1, 0, 20, Arrays.asList(orderJson)));
 
 		uut.getOrders(0, 20);
 
 		verify(orderService).getOrders(0, 20, null);
-		verify(orderService).getTotalCount();
 		verifyNoMoreInteractions(orderService);
 
 		verify(featureChecker, times(0)).isTicket_5();
@@ -49,22 +52,22 @@ public class OrdersLinkingResource0Test {
 	@Test
 	public void testGetOrder() throws Exception {
 
-		OrderJson orderJson = new OrderJson("1", 2, STATE.SHIPPED);
-		when(orderService.getOrder("1")).thenReturn(orderJson);
+		Order orderJson = new Order(OrderId.fromString("1"), 2, STATE.SHIPPED);
+		when(orderService.getOrder(OrderId.fromString("1"))).thenReturn(orderJson);
 
-		uut.getOrder("1");
+		uut.getOrder(OrderId.fromString("1"));
 
-		verify(orderService).getOrder("1");
+		verify(orderService).getOrder(OrderId.fromString("1"));
 		verifyNoMoreInteractions(orderService);
 		verify(featureChecker, times(0)).isTicket_5();
 	}
 
 	@Test
 	public void testSendBack() throws Exception {
-		SendBackJson sendBackJson = new SendBackJson("hallo");
-		uut.sendBack("2", sendBackJson);
+		CreateSendBackJson sendBackJson = new CreateSendBackJson("hallo");
+		uut.sendBack(OrderId.fromString("2"), sendBackJson);
 
-		verify(orderService).sendBack("2", sendBackJson);
+		verify(returnsWriteService).create(sendBackJson, OrderId.fromString("2"));
 
 	}
 

@@ -14,7 +14,7 @@ public class FeatureMethodChecker implements MethodCheckerForLink {
 
 	@Override
 	public boolean test(Scope t) {
-		return featureChecker.hasFeature(t.getInvokedMethod());
+		return featureChecker.hasFeature(t);
 	}
 
 }

@@ -28,6 +28,7 @@ public class FeatureDynamicFeature0Test {
 	public void testConfigureWithout() throws Exception {
 		ResourceInfo resourceInfo = mock(ResourceInfo.class);
 		Method method = this.getClass().getMethod("testConfigureWithout");
+		when(resourceInfo.getResourceClass()).thenReturn((Class) this.getClass());
 		when(resourceInfo.getResourceMethod()).thenReturn(method);
 		FeatureContext featureContext = mock(FeatureContext.class);
 
@@ -42,6 +43,7 @@ public class FeatureDynamicFeature0Test {
 		ResourceInfo resourceInfo = mock(ResourceInfo.class);
 		Method method = this.getClass().getMethod("testConfigureWith");
 		when(resourceInfo.getResourceMethod()).thenReturn(method);
+		when(resourceInfo.getResourceClass()).thenReturn((Class) this.getClass());
 		FeatureContext featureContext = mock(FeatureContext.class);
 
 		uut.configure(resourceInfo, featureContext);

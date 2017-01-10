@@ -17,7 +17,7 @@ import java.lang.annotation.Target;
  * @author joerg_adler
  *
  */
-@Target({ ElementType.METHOD, ElementType.FIELD })
+@Target({ ElementType.METHOD, ElementType.FIELD, ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Feature {
 	KnownFeatureId value();

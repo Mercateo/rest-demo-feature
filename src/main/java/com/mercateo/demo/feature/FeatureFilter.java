@@ -27,7 +27,7 @@ public class FeatureFilter implements ContainerRequestFilter {
 	@Override
 	public void filter(ContainerRequestContext requestContext) {
 		if (!featureChecker.hasFeature(feature)) {
-			throw new WebApplicationException(Response.Status.UNAUTHORIZED);
+			throw new WebApplicationException(Response.Status.GONE);
 		}
 	}
 

@@ -1,4 +1,4 @@
-package com.mercateo.demo.resources;
+package com.mercateo.demo.resources.orders;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.verify;
@@ -17,12 +17,16 @@ import org.mockito.runners.MockitoJUnitRunner;
 import com.mercateo.common.rest.schemagen.link.LinkMetaFactory;
 import com.mercateo.common.rest.schemagen.link.relation.Rel;
 import com.mercateo.common.rest.schemagen.types.ObjectWithSchema;
+import com.mercateo.common.rest.schemagen.types.PaginatedList;
 import com.mercateo.common.rest.schemagen.types.PaginatedResponse;
 import com.mercateo.common.rest.schemagen.types.PaginatedResponseBuilderCreator;
-import com.mercateo.demo.resources.json.OrderJson;
-import com.mercateo.demo.resources.json.SendBackJson;
-import com.mercateo.demo.services.OrderService;
-import com.mercateo.demo.services.STATE;
+import com.mercateo.demo.resources.returns.CreateSendBackJson;
+import com.mercateo.demo.services.order.Order;
+import com.mercateo.demo.services.order.OrderId;
+import com.mercateo.demo.services.order.OrderService;
+import com.mercateo.demo.services.order.STATE;
+import com.mercateo.demo.services.returns.ReturnId;
+import com.mercateo.demo.services.returns.ReturnsWriteService;
 
 @RunWith(MockitoJUnitRunner.class)
 public class OrdersResource0Test {
@@ -38,16 +42,18 @@ public class OrdersResource0Test {
 	@InjectMocks
 	private OrdersResource uut;
 
+	@Mock
+	private ReturnsWriteService returnsWriteService;
+
 	@Test
 	public void testGetOrders() throws Exception {
-		OrderJson orderJson = new OrderJson("1", 2, STATE.SHIPPED);
-		when(orderService.getOrders(0, 20, null)).thenReturn(Arrays.asList(orderJson));
-		when(orderService.getTotalCount()).thenReturn(1);
+		Order orderJson = new Order(OrderId.fromString("1"), 2, STATE.SHIPPED);
+		when(orderService.getOrders(0, 20, null)).thenReturn(new PaginatedList<>(1, 0, 20, Arrays.asList(orderJson)));
 
 		PaginatedResponse<OrderJson> resp = uut.getOrders(new SearchQueryBean(0, 20));
 
 		verify(orderService).getOrders(0, 20, null);
-		verify(orderService).getTotalCount();
+
 		verifyNoMoreInteractions(orderService);
 
 		ObjectWithSchema<OrderJson> order = resp.object.members.get(0);
@@ -58,12 +64,12 @@ public class OrdersResource0Test {
 	@Test
 	public void testGetOrder() throws Exception {
 
-		OrderJson orderJson = new OrderJson("1", 2, STATE.SHIPPED);
-		when(orderService.getOrder("1")).thenReturn(orderJson);
+		Order orderJson = new Order(OrderId.fromString("1"), 2, STATE.SHIPPED);
+		when(orderService.getOrder(OrderId.fromString("1"))).thenReturn(orderJson);
 
-		ObjectWithSchema<OrderJson> order = uut.getOrder("1");
+		ObjectWithSchema<OrderJson> order = uut.getOrder(OrderId.fromString("1"));
 
-		verify(orderService).getOrder("1");
+		verify(orderService).getOrder(OrderId.fromString("1"));
 		verifyNoMoreInteractions(orderService);
 
 		assertTrue(order.schema.getByRel(Rel.SELF).isPresent());
@@ -72,10 +78,11 @@ public class OrdersResource0Test {
 
 	@Test
 	public void testSendBack() throws Exception {
-		SendBackJson sendBackJson = new SendBackJson("hallo");
-		uut.sendBack("2", sendBackJson);
+		CreateSendBackJson sendBackJson = new CreateSendBackJson("hallo");
+		when(returnsWriteService.create(sendBackJson, OrderId.fromString("2"))).thenReturn(ReturnId.fromString("1"));
+		uut.sendBack(OrderId.fromString("2"), sendBackJson);
 
-		verify(orderService).sendBack("2", sendBackJson);
+		verify(returnsWriteService).create(sendBackJson, OrderId.fromString("2"));
 
 	}
 

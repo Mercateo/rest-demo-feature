@@ -1,4 +1,4 @@
-package com.mercateo.demo.services;
+package com.mercateo.demo.services.order;
 
 public enum STATE {
 	SHIPPED, PROCESSING, OPEN, CANCELED, RETURNED

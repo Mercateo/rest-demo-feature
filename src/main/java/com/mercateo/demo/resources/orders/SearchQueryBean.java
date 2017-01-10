@@ -1,7 +1,9 @@
-package com.mercateo.demo.resources;
+package com.mercateo.demo.resources.orders;
 
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.QueryParam;
+
+import com.mercateo.demo.services.order.OrderId;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -23,5 +25,5 @@ public class SearchQueryBean {
 	Integer limit;
 
 	@QueryParam("id")
-	String id;
+	OrderId id;
 }

@@ -4,4 +4,6 @@ public class Paths {
 	public static final String ORDERS = "orders";
 
 	public static final String ORDERS_LINKING = "orders-linking";
+
+	public static final String RETURNS = "returns";
 }

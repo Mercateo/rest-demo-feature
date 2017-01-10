@@ -14,6 +14,11 @@ import com.mercateo.common.rest.schemagen.JsonHyperSchema;
 import com.mercateo.common.rest.schemagen.link.LinkMetaFactory;
 import com.mercateo.common.rest.schemagen.types.ObjectWithSchema;
 import com.mercateo.demo.resources.jersey.linking.OrdersLinkingResource;
+import com.mercateo.demo.resources.orders.OrderRel;
+import com.mercateo.demo.resources.orders.OrdersResource;
+import com.mercateo.demo.resources.orders.SearchQueryBean;
+import com.mercateo.demo.resources.returns.ReturnRel;
+import com.mercateo.demo.resources.returns.ReturnsResource;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -37,8 +42,11 @@ public class RootResource implements JerseyResource {
 
 		Optional<Link> ordersLinkingLink = linkMetaFactory.createFactoryFor(OrdersLinkingResource.class)
 				.forCall(OrderRel.ORDERS_LINKING, r -> r.getOrders(0, 20));
+
+		Optional<Link> returnsLink = linkMetaFactory.createFactoryFor(ReturnsResource.class).forCall(ReturnRel.RETURNS,
+				r -> r.getReturns(new com.mercateo.demo.resources.returns.SearchQueryBean(0, 20)));
 		return ObjectWithSchema.create(new PersonJson("Test", "Tester"),
-				JsonHyperSchema.from(ordersLink, ordersLinkingLink));
+				JsonHyperSchema.from(ordersLink, ordersLinkingLink, returnsLink));
 
 	}
 }

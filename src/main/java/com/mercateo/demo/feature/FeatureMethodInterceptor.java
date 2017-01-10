@@ -43,6 +43,7 @@ public class FeatureMethodInterceptor implements MethodInterceptor {
 		if (value == null) {
 			return;
 		}
+		@SuppressWarnings("unchecked")
 		Set<Field> fields = ReflectionUtils.getAllFields(clazz);
 		for (Field field : fields) {
 			if (Modifier.isStatic(field.getModifiers())) {
