@@ -19,7 +19,6 @@ public class ReturnJson {
 	@Feature(KnownFeatureId.TICKET_6)
 	private CARRIER carrier;
 
-	@NonNull
 	private long date;
 
 	@NonNull
