@@ -1,4 +1,4 @@
-# rest-demo-jersey [![Build Status](https://travis-ci.org/Mercateo/rest-demo-feature.svg?branch=major-refactoring)](https://travis-ci.org/Mercateo/rest-demo-feature) [![Coverage Status](https://coveralls.io/repos/github/Mercateo/rest-demo-feature/badge.svg?branch=major-refactoring)](https://coveralls.io/github/Mercateo/rest-demo-feature?branch=major-refactoring)
+# rest-demo-jersey [![Build Status](https://travis-ci.org/Mercateo/rest-demo-feature.svg?branch=master)](https://travis-ci.org/Mercateo/rest-demo-feature) [![Coverage Status](https://coveralls.io/repos/github/Mercateo/rest-demo-feature/badge.svg?branch=master)](https://coveralls.io/github/Mercateo/rest-demo-feature?branch=master)
 Spring-boot and Jersey based REST service showing a lot of things, we discovered in the last time. 
 ## startup
 The Main is in com.mercateo.demo.OrderServer
