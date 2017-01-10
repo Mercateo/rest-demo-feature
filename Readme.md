@@ -16,7 +16,7 @@ There are 3 links
 To play a little bit with the Feature around, manipulate com.mercateo.demo.feature.SimpleFeatureChecker. Feature 5 toggles the ability to send an order back. Feature 6 toggles the prefered carrier attribute of the sending back object. There are a lot of things we want to show here:
 * Feature toggling is just the toggling of a link (which is a uniform approach). The concrete reason, why the link isn't there, is not in the concern of the client. So the server doesn't have to expose the logic and can therefore change it.
 * Feature Toggling and Link generation just work with annotations in our link-building framework. One only has to write com.mercateo.demo.feature.FeatureFieldChecker and com.mercateo.demo.feature.FeatureMethodChecker. Having all the advantages of declarative programming.
-**Note:** The com.mercateo.demo.feature.Feature and the feature checkers are only simple "mocks", of course one can bring here own Annotations and frameworks like [togglz]{https://www.togglz.org/}. 
+**Note:** The com.mercateo.demo.feature.Feature and the feature checkers are only simple "mocks", of course one can bring here own Annotations and frameworks like [togglz](https://www.togglz.org/). 
 
 # The resource way
 In the orders resource you can see a send-back link in two different ways.
