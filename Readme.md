@@ -34,7 +34,7 @@ After starting the server, the resource http://localhost:9090/orders/2 looks lik
             "message"
           ]
         },
-        "method": "PUT",
+        "method": "POST",
         "rel": "send-back",
         "relType": "inherited",
         "mediaType": "application/json",
@@ -60,7 +60,7 @@ After starting the server, the resource http://localhost:9090/orders/2 looks lik
             "orderId"
           ]
         },
-        "method": "PUT",
+        "method": "POST",
         "rel": "send-back-noun",
         "relType": "inherited",
         "mediaType": "application/json",

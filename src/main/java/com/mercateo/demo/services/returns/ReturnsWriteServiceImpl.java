@@ -2,9 +2,9 @@ package com.mercateo.demo.services.returns;
 
 import java.util.Date;
 
+import javax.inject.Inject;
 import javax.ws.rs.WebApplicationException;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.mercateo.demo.resources.returns.CreateSendBackJson;
@@ -24,7 +24,7 @@ public class ReturnsWriteServiceImpl implements ReturnsWriteService {
 
 	private ReturnsReadRepo returnsReadRepo;
 
-	@Autowired
+	@Inject
 	public ReturnsWriteServiceImpl(@NonNull ReturnsCrudRepo returnsCrudRepo, @NonNull OrdersCrudRepo orderCrudRepo,
 			@NonNull ReturnsReadRepo returnsReadRepo) {
 		this.returnsReadRepo = returnsReadRepo;

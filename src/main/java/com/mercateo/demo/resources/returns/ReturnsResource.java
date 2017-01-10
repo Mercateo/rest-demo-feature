@@ -5,7 +5,7 @@ import java.util.Optional;
 import javax.inject.Inject;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.GET;
-import javax.ws.rs.PUT;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -98,7 +98,7 @@ public class ReturnsResource implements JerseyResource {
 
 	}
 
-	@PUT
+	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	public ObjectWithSchema<Void> createNew(CreateReturnJson createJson) {
 		OrderId orderId = OrderId.fromString(createJson.getOrderId());
